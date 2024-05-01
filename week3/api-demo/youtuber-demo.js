@@ -33,9 +33,17 @@ youtuber_db.set(id++, youtuber3);
 // 전체 조회
 app.get("/youtubers", (req, res) => {
   var youtubers = {};
-  youtuber_db.forEach(function (value, key) {
-    youtubers[key] = value;
-  });
+
+  if (youtuber_db.size !== 0) {
+    youtuber_db.forEach(function (value, key) {
+      youtuber_db[key] = value;
+    });
+    res.json(youtubers);
+  } else {
+    res.status(404).json({
+      message: "조회할 유튜버가 없습니다",
+    });
+  }
 
   res.json(youtubers);
 });
@@ -59,16 +67,21 @@ app.use(express.json()); // 미들웨어 설정
 // req: body <= channelTitle, sub=0, videoNum=0
 // res: channelTitle님, 유튜버 생활을 응원합니다
 app.post("/youtubers", (req, res) => {
-  console.log(req.body);
-  // Map(db)에 저장(put)해줘야 함
-  youtuber_db.set(id++, req.body);
-
-  // id가 +1로 바로 업데이트 되기 때문에 -1한 값을 넣어줘야 함
-  res.json({
-    message: `${
-      youtuber_db.get(id - 1).channelTitle
-    }님, 유튜버 생활을 응원합니다!`,
-  });
+  const channelTitle = req.body.channelTitle;
+  if (channelTitle) {
+    // Map(db)에 저장(put)해줘야 함
+    youtuber_db.set(id++, req.body);
+    // id가 +1로 바로 업데이트 되기 때문에 -1한 값을 넣어줘야 함
+    res.status(201).json({
+      message: `${
+        youtuber_db.get(id - 1).channelTitle
+      }님, 유튜버 생활을 응원합니다!`,
+    });
+  } else {
+    res.status(400).json({
+      message: "요청 값을 제대로 보내주세요",
+    });
+  }
 });
 
 app.delete("/youtubers/:id", (req, res) => {
