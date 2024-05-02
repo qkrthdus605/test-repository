@@ -7,8 +7,39 @@ let db = new Map();
 var id = 1;
 
 // 로그인
-app.post("/login", (req, res) => {});
+app.post("/login", (req, res) => {
+  console.log(req.body);
 
+  // userId가 db에 저장된 회원인지 확인
+  const { userId, password } = req.body;
+  var loginUser = {};
+
+  db.forEach((user, id) => {
+    if (user.userId === userId) {
+      loginUser = user;
+    }
+  });
+
+  // userId 값을 못 찾았으면
+  if (isExist(loginUser)) {
+    // pwd도 맞는지 비교
+    if (loginUser.password === password) {
+      console.log("비밀번호 일치");
+    } else {
+      console.log("비밀번호 불일치");
+    }
+  } else {
+    console.log("없는 아이디");
+  }
+});
+
+function isExist(obj) {
+  if (Object.keys(obj).length) {
+    return true;
+  } else {
+    return false;
+  }
+}
 // 회원가입
 app.post("/join", (req, res) => {
   if (req.body == {}) {
