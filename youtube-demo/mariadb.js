@@ -9,7 +9,4 @@ const connection = mysql.createConnection({
   dateStrings: true,
 });
 
-connection.query("SELECT * FROM `users`", function (err, results, fields) {
-  console.log(results);
-  console.log(fields);
-});
+module.exports = connection;
